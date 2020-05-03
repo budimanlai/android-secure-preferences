@@ -2,6 +2,8 @@
 
 This is Android Shared preference wrapper that encrypts the values of Shared Preferences using AES 256 GCM. Each key is stored as a one way SHA 256 hash. Both keys and values are base64 encoded before storing into prefs xml file. By default the generated key is stored in the backing preferences file and so can be read and extracted by root user.
 
+![](https://budimanlai.com/i/secure_pref_02.jpg)
+
 # Usage
 
 **Step 1.** Add the JitPack repository to your build file Add it in your root build.gradle at the end of repositories:
