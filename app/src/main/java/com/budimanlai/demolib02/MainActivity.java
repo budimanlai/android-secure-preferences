@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // example save preference
-            SharedPreferences securePreferences = new SecurePreferences(this);
+            SecurePreferences securePreferences = new SecurePreferences(this);
 
             // or
             // SharedPreferences securePreferences = new SecurePreferences(this, "password");
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             // get all
             Map<String, ?> map = securePreferences.getAll();
             Log.i(TAG, "map: " + map);
-            Log.i(TAG, "map[profile]: " + map.get(SecurePreferences.keyName("profile")));
+            Log.i(TAG, "map[profile]: " + map.get(securePreferences.keyName("profile")));
 
             // read one by one
             String key1 = securePreferences.getString("profile", null);
@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
             Set<String> newSet2 = new HashSet<>(securePreferences.getStringSet("keySet1", new HashSet<String>()));
             Log.i(TAG, "newSet2: " + newSet2);
+
+//            securePreferences.changePassword("123");
 
         } catch (Exception e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
