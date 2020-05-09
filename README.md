@@ -91,4 +91,7 @@ securePreferences.edit().putStringSet("keySet1", newSet).apply();
 
 Set<String> newSet2 = new HashSet<>(securePreferences.getStringSet("keySet1", new HashSet<String>()));
 Log.i(TAG, "newSet2: " + newSet2);
+
+// change password
+securePreferences.changePassword("123");
 ```
