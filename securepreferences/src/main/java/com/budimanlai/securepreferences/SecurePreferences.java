@@ -13,12 +13,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

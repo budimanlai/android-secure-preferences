@@ -7,10 +7,8 @@
 
 package com.budimanlai.demolib02;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.budimanlai.securepreferences.SecurePreferences;
@@ -85,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "long: " + key6);
 
             // read string set
-            Set<String> newSet = new HashSet<>(securePreferences.getStringSet("keySet1", new HashSet<String>()));
+            Set<String> newSet = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
             Log.i(TAG, "newSet: " + newSet);
 
             // add a new string
-            newSet.add("String set 4");
-            securePreferences.edit().putStringSet("keySet1", newSet).apply();
+//            newSet.add("String set 4");
+//            securePreferences.edit().putStringSet("keySet1", newSet).apply();
 
-            Set<String> newSet2 = new HashSet<>(securePreferences.getStringSet("keySet1", new HashSet<String>()));
+            Set<String> newSet2 = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
             Log.i(TAG, "newSet2: " + newSet2);
 
 //            securePreferences.changePassword("123");
