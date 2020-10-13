@@ -18,7 +18,7 @@ This is Android Shared preference wrapper that encrypts the values of Shared Pre
 **Step 2.** Add the dependency
 
     dependencies {
-       implementation 'com.github.budimanlai:android-secure-preferences:1.0'
+       implementation 'com.github.budimanlai:android-secure-preferences:1.2'
     }
 
 # Examples
