@@ -26,6 +26,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -107,6 +108,8 @@ public class SecurePreferences implements SharedPreferences {
 
         secretKey = new SecretKeySpec(mPassword, "AES");
     }
+
+    public void setDebugable(boolean debugable) { mIsLoggingEnabled = debugable; }
 
     /**
      * generate sha256 hash
@@ -232,6 +235,8 @@ public class SecurePreferences implements SharedPreferences {
 
             return Base64.encodeToString(byteBuffer.array(), SecurePreferences.flags);
         } catch (Exception e) {
+            this.loge(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -252,6 +257,8 @@ public class SecurePreferences implements SharedPreferences {
 
             return new String(dec, StandardCharsets.UTF_8);
         } catch (Exception e) {
+            this.loge(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -293,9 +300,10 @@ public class SecurePreferences implements SharedPreferences {
     @Override
     public String getString(String s, @Nullable String defaultValue) {
         final String encryptedValue = mSharedPreferences.getString(keyName(s), null);
+        if (encryptedValue == null) { return defaultValue; }
 
         String decryptedValue = decrypt(encryptedValue);
-        if (encryptedValue != null && decryptedValue != null) {
+        if (decryptedValue != null) {
             return decryptedValue;
         } else {
             return defaultValue;

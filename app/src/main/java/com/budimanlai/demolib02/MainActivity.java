@@ -15,6 +15,7 @@ import com.budimanlai.securepreferences.SecurePreferences;
 
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -31,14 +32,16 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // example save preference
-            SecurePreferences securePreferences = new SecurePreferences(this);
+//            SecurePreferences securePreferences = new SecurePreferences(this);
 
             // or
             // SharedPreferences securePreferences = new SecurePreferences(this, "password");
             // or
-            // SharedPreferences securePreferences = new SecurePreferences(this, "password", "pref_custome_name");
+             SecurePreferences securePreferences = new SecurePreferences(this, "password", "pref_custome_name");
             // or
             // SharedPreferences securePreferences = new SecurePreferences(this, "password", "salt", "pref_custome_name");
+
+            securePreferences.setDebugable(true);
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", 123);
@@ -46,12 +49,13 @@ public class MainActivity extends AppCompatActivity {
             jsonObject.put("fullname", "Budiman Lai");
 
             // write to pref
-            securePreferences.edit().putString("profile", jsonObject.toString()).apply();
-            securePreferences.edit().putString("token", "1234567890").apply();
-            securePreferences.edit().putBoolean("key3", true).apply();
-            securePreferences.edit().putFloat("key4", 0.123456f).apply();
-            securePreferences.edit().putInt("key5", 123456).apply();
-            securePreferences.edit().putLong("key6", 123456).apply();
+//            securePreferences.edit().putString("date", String.valueOf(new Date())).apply();
+//            securePreferences.edit().putString("profile", jsonObject.toString()).apply();
+//            securePreferences.edit().putString("token", "1234567890").apply();
+//            securePreferences.edit().putBoolean("key3", true).apply();
+//            securePreferences.edit().putFloat("key4", 0.123456f).apply();
+//            securePreferences.edit().putInt("key5", 123456).apply();
+//            securePreferences.edit().putLong("key6", 123456).apply();
 
             // write string set
             Set<String> sets = new HashSet<>();
@@ -63,24 +67,26 @@ public class MainActivity extends AppCompatActivity {
 
             // example read preference
             // get all
-            Map<String, ?> map = securePreferences.getAll();
-            Log.i(TAG, "map: " + map);
-            Log.i(TAG, "map[profile]: " + map.get(securePreferences.keyName("profile")));
+//            Map<String, ?> map = securePreferences.getAll();
+//            Log.i(TAG, "map: " + map);
+//            Log.i(TAG, "map[profile]: " + map.get(securePreferences.keyName("profile")));
 
             // read one by one
-            String key1 = securePreferences.getString("profile", null);
-            String key2 = securePreferences.getString("token", null);
-            boolean key3 = securePreferences.getBoolean("key3", false);
-            float key4 = securePreferences.getFloat("key4", 0);
-            int key5 = securePreferences.getInt("key5", 0);
-            long key6 = securePreferences.getLong("key6", 0);
+//            String key1 = securePreferences.getString("profile", null);
+//            String key2 = securePreferences.getString("token", null);
+//            boolean key3 = securePreferences.getBoolean("key3", false);
+//            float key4 = securePreferences.getFloat("key4", 0);
+//            int key5 = securePreferences.getInt("key5", 0);
+//            long key6 = securePreferences.getLong("key6", 0);
 
-            Log.i(TAG, "profile: " + key1);
-            Log.i(TAG, "token: " + key2);
-            Log.i(TAG, "boolean: " + key3);
-            Log.i(TAG, "float: " + key4);
-            Log.i(TAG, "int: " + key5);
-            Log.i(TAG, "long: " + key6);
+            // date: Wed Oct 14 12:05:07 GMT+07:00 2020
+            Log.i(TAG, "date: " + securePreferences.getString("date", ""));
+//            Log.i(TAG, "profile: " + key1);
+//            Log.i(TAG, "token: " + key2);
+//            Log.i(TAG, "boolean: " + key3);
+//            Log.i(TAG, "float: " + key4);
+//            Log.i(TAG, "int: " + key5);
+//            Log.i(TAG, "long: " + key6);
 
             // read string set
             Set<String> newSet = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
