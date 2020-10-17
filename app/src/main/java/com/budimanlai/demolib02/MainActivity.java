@@ -10,6 +10,8 @@ package com.budimanlai.demolib02;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.budimanlai.securepreferences.SecurePreferences;
 
@@ -19,90 +21,93 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String TAG = "TAG";
+    private SecurePreferences securePreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String TAG = "TAG_LIB";
+        final Button btnWrite = findViewById(R.id.btnWrite);
+        btnWrite.setOnClickListener(mWriteListener);
 
-        try {
-            // example save preference
-//            SecurePreferences securePreferences = new SecurePreferences(this);
+        final Button btnRead = findViewById(R.id.btnRead);
+        btnRead.setOnClickListener(mReadListener);
 
-            // or
-            // SharedPreferences securePreferences = new SecurePreferences(this, "password");
-            // or
-             SecurePreferences securePreferences = new SecurePreferences(this, "password", "pref_custome_name");
-            // or
-            // SharedPreferences securePreferences = new SecurePreferences(this, "password", "salt", "pref_custome_name");
+        this.securePreferences = new SecurePreferences(this, "password", "pref_custome_name");
+        this.securePreferences.setDebugable(true);
+        this.securePreferences.setPrefix("ganteng");
+    }
 
-            securePreferences.setDebugable(true);
+    private String randomString(int length) {
+        String ALLOWED_CHARACTERS ="123455678890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("user_id", 123);
-            jsonObject.put("email", "budiman.lai@gmail.com");
-            jsonObject.put("fullname", "Budiman Lai");
+        final Random random=new Random();
+        final StringBuilder sb=new StringBuilder(length);
+        for(int i=0;i<length;++i) sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        return sb.toString();
+    }
 
-            // write to pref
-//            securePreferences.edit().putString("date", String.valueOf(new Date())).apply();
-//            securePreferences.edit().putString("profile", jsonObject.toString()).apply();
-//            securePreferences.edit().putString("token", "1234567890").apply();
-//            securePreferences.edit().putBoolean("key3", true).apply();
-//            securePreferences.edit().putFloat("key4", 0.123456f).apply();
-//            securePreferences.edit().putInt("key5", 123456).apply();
-//            securePreferences.edit().putLong("key6", 123456).apply();
+    private View.OnClickListener mWriteListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                // example save json string to preferences
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("user_id", 123);
+                jsonObject.put("email", "budiman.lai@gmail.com");
+                jsonObject.put("fullname", "Budiman Lai");
 
-            // write string set
-            Set<String> sets = new HashSet<>();
-            sets.add("String set 1");
-            sets.add("String set 2");
-            sets.add("String set 3");
+                securePreferences.edit().putString("profile", jsonObject.toString()).apply();
 
-            securePreferences.edit().putStringSet("keySet1", sets).apply();
+                // example to save data to preferences
+                securePreferences.edit().putString("date", String.valueOf(new Date())).apply();
+                securePreferences.edit().putString("token", randomString(16)).apply();
+                securePreferences.edit().putBoolean("key3", true).apply();
+                securePreferences.edit().putFloat("key4", 0.123456f).apply();
+                securePreferences.edit().putInt("key5", 123456).apply();
+                securePreferences.edit().putLong("key6", 123456).apply();
 
-            // example read preference
-            // get all
-//            Map<String, ?> map = securePreferences.getAll();
-//            Log.i(TAG, "map: " + map);
-//            Log.i(TAG, "map[profile]: " + map.get(securePreferences.keyName("profile")));
+                // example string set
+                Set<String> sets = new HashSet<>();
+                sets.add("String set 1");
+                sets.add("String set 2");
+                sets.add("String set 3");
 
-            // read one by one
-//            String key1 = securePreferences.getString("profile", null);
-//            String key2 = securePreferences.getString("token", null);
-//            boolean key3 = securePreferences.getBoolean("key3", false);
-//            float key4 = securePreferences.getFloat("key4", 0);
-//            int key5 = securePreferences.getInt("key5", 0);
-//            long key6 = securePreferences.getLong("key6", 0);
+                securePreferences.edit().putStringSet("keySet1", sets).apply();
+            } catch (Exception e) {
+                Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            }
+        }
+    };
 
-            // date: Wed Oct 14 12:05:07 GMT+07:00 2020
-            Log.i(TAG, "date: " + securePreferences.getString("date", ""));
-//            Log.i(TAG, "profile: " + key1);
-//            Log.i(TAG, "token: " + key2);
-//            Log.i(TAG, "boolean: " + key3);
-//            Log.i(TAG, "float: " + key4);
-//            Log.i(TAG, "int: " + key5);
-//            Log.i(TAG, "long: " + key6);
+    private View.OnClickListener mReadListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // example read preferences
+            Log.d(TAG, "JSON String[profile]: " + securePreferences.getString("profile", null));
+            Log.d(TAG, "String[date]: " + securePreferences.getString("date", null));
+            Log.d(TAG, "String[token]: " + securePreferences.getString("token", null));
+            Log.d(TAG, "Boolean[key3]: " + securePreferences.getBoolean("key3", false));
+            Log.d(TAG, "Float[key4]: " + securePreferences.getFloat("key4", 0));
+            Log.d(TAG, "Int[key5]: " + securePreferences.getInt("key5", 0));
+            Log.d(TAG, "Long[key6]: " + securePreferences.getLong("key6", 0));
+
+            // QsQ53osuxHVP4jVy
+            // example read all field
+            Map<String, ?> map = securePreferences.getAll();
+            Log.i(TAG, "map: " + map);
+            Log.i(TAG, "map[profile]: " + map.get(securePreferences.keyName("profile")));
 
             // read string set
             Set<String> newSet = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
-            Log.i(TAG, "newSet: " + newSet);
-
-            // add a new string
-//            newSet.add("String set 4");
-//            securePreferences.edit().putStringSet("keySet1", newSet).apply();
-
-            Set<String> newSet2 = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
-            Log.i(TAG, "newSet2: " + newSet2);
-
-//            securePreferences.changePassword("123");
-
-        } catch (Exception e) {
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.i(TAG, "Set<String>: " + newSet);
         }
-    }
+    };
 }

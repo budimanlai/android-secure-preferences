@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SecurePreferences</string>
+    <string name="welcome">This is SecurePreferences demo page. Please watch the Logcat for information</string>
+    <string name="title_write_setting">Write Setting</string>
+    <string name="title_read_setting">Read Setting</string>
 </resources>

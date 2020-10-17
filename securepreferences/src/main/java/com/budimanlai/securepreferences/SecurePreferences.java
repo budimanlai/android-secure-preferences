@@ -30,7 +30,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -88,11 +90,8 @@ public class SecurePreferences implements SharedPreferences {
             this.mSharedPreferences = getSharedPreferenceFile(sharedPrefFilename);
         }
 
-        prefix = getDefaultSalt(mContext);
-
-        // Salt for enc and dec
         if (TextUtils.isEmpty(salt)) {
-            mAssociatedData = prefix.getBytes(charSet);
+            mAssociatedData = sha256(getUniquePsuedoID() + "." + mContext.getPackageName());
         } else {
             mAssociatedData = salt.getBytes(charSet);
         }
@@ -108,6 +107,13 @@ public class SecurePreferences implements SharedPreferences {
 
         secretKey = new SecretKeySpec(mPassword, "AES");
     }
+
+    /**
+     * Set key prefix
+     *
+     * @param p
+     */
+    public void setPrefix(String p) { prefix = p; }
 
     public void setDebugable(boolean debugable) { mIsLoggingEnabled = debugable; }
 
@@ -134,58 +140,6 @@ public class SecurePreferences implements SharedPreferences {
     }
 
     /**
-     * This method is here for backwards compatibility reasons. Recommend supplying your own Salt
-     *
-     * @param context
-     * @return Consistent between app restarts, device restarts, factory resets,
-     * however cannot be guaranteed on OS updates.
-     */
-    @SuppressLint("MissingPermission")
-    private static String getDefaultSalt(Context context) {
-
-        //Android Q removes all access to Serial, fallback to Settings.Secure.ANDROID_ID
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            return getSecureDeviceId(context);
-        } else {
-            return getDeviceSerialNumber(context);
-        }
-    }
-
-    @SuppressLint("HardwareIds")
-    private static String getSecureDeviceId(Context context) {
-        return Settings.Secure.getString(
-                context.getContentResolver(),
-                Settings.Secure.ANDROID_ID
-        );
-    }
-
-    /**
-     * Gets the hardware serial number of this device. This only for backwards compatibility
-     *
-     * @return serial number or Settings.Secure.ANDROID_ID if not available.
-     */
-    @SuppressLint("MissingPermission")
-    private static String getDeviceSerialNumber(Context context) {
-        try {
-            String deviceSerial = "";
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
-                deviceSerial = Build.getSerial();
-            } else {
-                deviceSerial = Build.SERIAL;
-            }
-
-            if (TextUtils.isEmpty(deviceSerial)) {
-                return getSecureDeviceId(context);
-            } else {
-                return deviceSerial;
-            }
-        } catch (Exception ignored) {
-            // Fall back to Android_ID
-            return getSecureDeviceId(context);
-        }
-    }
-
-    /**
      * if a prefFilename is not defined the getDefaultSharedPreferences is used.
      *
      * @return SharedPreferences
@@ -208,7 +162,8 @@ public class SecurePreferences implements SharedPreferences {
      * @return String
      */
     public String keyName(String key) {
-        return Base64.encodeToString(sha256(key + "." + prefix), SecurePreferences.flags);
+        String k = TextUtils.isEmpty(prefix) ? key : key + "_" + prefix;
+        return Base64.encodeToString(sha256(k), SecurePreferences.flags);
     }
 
     /**
@@ -604,5 +559,53 @@ public class SecurePreferences implements SharedPreferences {
             }
         }
 
+    }
+
+    /**
+     * Return pseudo unique ID
+     * @return ID
+     */
+    public static String getUniquePsuedoID() {
+        // If all else fails, if the user does have lower than API 9 (lower
+        // than Gingerbread), has reset their device or 'Secure.ANDROID_ID'
+        // returns 'null', then simply the ID returned will be solely based
+        // off their Android device information. This is where the collisions
+        // can happen.
+        // Thanks http://www.pocketmagic.net/?p=1662!
+        // Try not to use DISPLAY, HOST or ID - these items could change.
+        // If there are collisions, there will be overlapping data
+
+        String m_szDevIDShort = 35 +
+                Build.BOARD +
+                Build.BRAND +
+                Build.CPU_ABI +
+                Build.DEVICE +
+                Build.MANUFACTURER +
+                Build.MODEL +
+                Build.PRODUCT +
+                Build.HARDWARE;
+
+        // Thanks to @Roman SL!
+        // https://stackoverflow.com/a/4789483/950427
+        // Only devices with API >= 9 have android.os.Build.SERIAL
+        // http://developer.android.com/reference/android/os/Build.html#SERIAL
+        // If a user upgrades software or roots their device, there will be a duplicate entry
+        String serial = null;
+        try {
+            serial = Objects.requireNonNull(Build.class.getField("SERIAL").get(null)).toString();
+
+            // Go ahead and return the serial for api => 9
+            // return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+            return Base64.encodeToString(sha256(new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString()), SecurePreferences.flags);
+        } catch (Exception exception) {
+            // String needs to be initialized
+            serial = "serial"; // some value
+        }
+
+        // Thanks @Joe!
+        // https://stackoverflow.com/a/2853253/950427
+        // Finally, combine the values we have found by using the UUID class to create a unique identifier
+        //return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
+        return Base64.encodeToString(sha256(new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString()), SecurePreferences.flags);
     }
 }
