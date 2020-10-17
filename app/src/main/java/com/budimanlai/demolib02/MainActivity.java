@@ -15,6 +15,8 @@ import android.widget.Button;
 
 import com.budimanlai.securepreferences.SecurePreferences;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -66,6 +68,17 @@ public class MainActivity extends AppCompatActivity {
 
                 securePreferences.edit().putString("profile", jsonObject.toString()).apply();
 
+                // or
+                securePreferences.setJSONObject("profile_object", jsonObject);
+
+                // you also can save JSONArray too
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(jsonObject);
+                jsonArray.put(jsonObject);
+                jsonArray.put(jsonObject);
+                jsonArray.put(jsonObject);
+                securePreferences.setJSONArray("profile_array", jsonArray);
+
                 // example to save data to preferences
                 securePreferences.edit().putString("date", String.valueOf(new Date())).apply();
                 securePreferences.edit().putString("token", randomString(16)).apply();
@@ -82,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
                 securePreferences.edit().putStringSet("keySet1", sets).apply();
             } catch (Exception e) {
+                Log.e(TAG, "error");
                 Log.e(TAG, Objects.requireNonNull(e.getMessage()));
             }
         }
@@ -99,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Int[key5]: " + securePreferences.getInt("key5", 0));
             Log.d(TAG, "Long[key6]: " + securePreferences.getLong("key6", 0));
 
-            // QsQ53osuxHVP4jVy
             // example read all field
             Map<String, ?> map = securePreferences.getAll();
             Log.i(TAG, "map: " + map);
@@ -108,6 +121,27 @@ public class MainActivity extends AppCompatActivity {
             // read string set
             Set<String> newSet = new HashSet<>(Objects.requireNonNull(securePreferences.getStringSet("keySet1", new HashSet<String>())));
             Log.i(TAG, "Set<String>: " + newSet);
+
+            try {
+                // read JSONObject
+                JSONObject profile_object = securePreferences.getJSONObject("profile_object", null);
+                if (profile_object != null) {
+                    Log.d(TAG, "JSONObject[profile_object]: " + profile_object.toString());
+                } else {
+                    Log.d(TAG, "JSONObject[profile_object]: null");
+                }
+
+                // read JSONArray
+                JSONArray profile_array = securePreferences.getJSONArray("profile_array", null);
+                if (profile_object != null) {
+                    Log.d(TAG, "JSONObject[profile_array]: " + profile_array.toString());
+                } else {
+                    Log.d(TAG, "JSONObject[profile_array]: null");
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "error");
+                Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            }
         }
     };
 }

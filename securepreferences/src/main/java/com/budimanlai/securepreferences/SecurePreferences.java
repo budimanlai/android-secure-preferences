@@ -19,6 +19,10 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -352,6 +356,58 @@ public class SecurePreferences implements SharedPreferences {
         } catch (NumberFormatException e) {
             throw new ClassCastException(e.getMessage());
         }
+    }
+
+    /**
+     * Save JSONObject to preferences
+     *
+     * @param key String
+     * @param jsonObject JSONObject
+     */
+    public void setJSONObject(String key, JSONObject jsonObject) {
+        edit().putString(key, jsonObject.toString()).apply();
+    }
+
+    /**
+     * Read JSONObject from preferences
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     * @throws JSONException
+     */
+    public JSONObject getJSONObject(String key, JSONObject defaultValue) throws JSONException {
+        String s = getString(key, null);
+        if (TextUtils.isEmpty(s)) { return defaultValue; }
+
+        assert s != null;
+        return new JSONObject(s);
+    }
+
+    /**
+     * Save JSONObject to preferences
+     *
+     * @param key String
+     * @param jsonArray JSONArray
+     */
+    public void setJSONArray(String key, JSONArray jsonArray) {
+        edit().putString(key, jsonArray.toString()).apply();
+    }
+
+    /**
+     * Read JSONObject from preferences
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     * @throws JSONException
+     */
+    public JSONArray getJSONArray(String key, JSONArray defaultValue) throws JSONException {
+        String s = getString(key, null);
+        if (TextUtils.isEmpty(s)) { return defaultValue; }
+
+        assert s != null;
+        return new JSONArray(s);
     }
 
     @Override
