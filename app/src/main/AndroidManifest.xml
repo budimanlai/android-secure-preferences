@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Created by Budiman Lai (budiman.lai@gmail.com) on 4/25/20 10:35 PM
   ~  Web: http://budimanlai.com, https://github.com/budimanlai
   ~  Copyright (c) 2020 . All rights reserved.
   ~  Last modified 4/25/20 9:26 PM
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.budimanlai.demolib02">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -16,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.budimanlai.demolib02.MainActivity">
+        <activity
+            android:name="com.budimanlai.demolib02.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

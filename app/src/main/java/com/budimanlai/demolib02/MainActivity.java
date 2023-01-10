@@ -8,10 +8,11 @@
 package com.budimanlai.demolib02;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.budimanlai.securepreferences.SecurePreferences;
 
@@ -48,11 +49,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String randomString(int length) {
-        String ALLOWED_CHARACTERS ="123455678890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
+        String ALLOWED_CHARACTERS = "123455678890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
 
-        final Random random=new Random();
-        final StringBuilder sb=new StringBuilder(length);
-        for(int i=0;i<length;++i) sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        final Random random = new Random();
+        final StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; ++i)
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
     }
 
